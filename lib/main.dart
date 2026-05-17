@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:state_management_learn/controllers/cubit/product_cubit.dart';
+import 'controllers/bloc/product_bloc.dart';
 import 'home_page.dart';
 
 void main() {
@@ -20,8 +21,12 @@ class MyApp extends StatelessWidget {
       ),
       home: MultiBlocProvider(
         providers: [
-          BlocProvider<ProductCubit>(
-            create: (BuildContext context) => ProductCubit()..getProductsList(),
+          // BlocProvider<ProductCubit>(
+          //   create: (BuildContext context) => ProductCubit()..getProductsList(),
+          // ),
+          BlocProvider<ProductBloc>(
+            create: (BuildContext context) =>
+                ProductBloc()..add(GetProductsEvent()),
           ),
         ],
         child: const HomePage(),

@@ -1,19 +1,24 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:state_management_learn/constants/api_constants.dart';
 import 'package:state_management_learn/models/product_model.dart';
 import 'package:http/http.dart' as http;
+
+part 'product_event.dart';
 part 'product_state.dart';
 
-class ProductCubit extends Cubit<ProductState> {
-  ProductCubit() : super(ProductInitialState());
+class ProductBloc extends Bloc<ProductEvent, ProductState> {
+  ProductBloc() : super(ProductInitialState()) {
+    on<GetProductsEvent>(_getProducts);
+  }
 
-  Future<void> getProductsList() async {
+  FutureOr<void> _getProducts(
+      GetProductsEvent event, Emitter<ProductState> emit) async {
     emit(ProductLoadingState());
-    // await Future.delayed(Duration(seconds: 4));
+    await Future.delayed(Duration(seconds: 4));
     try {
       final Uri url =
           Uri.parse('${ApiConstants.baseUrl + ApiConstants.productsEndpoint}');

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:state_management_learn/controllers/cubit/product_cubit.dart';
+import 'package:state_management_learn/controllers/bloc/product_bloc.dart';
+// import 'package:state_management_learn/controllers/cubit/product_cubit.dart';
 import 'package:state_management_learn/models/product_model.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +10,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("build Scaffold");
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -24,38 +26,62 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: BlocBuilder<ProductCubit, ProductState>(
-        builder: (context, state) {
-          if (state is ProductFailureState) {
-            return Center(
-              child: Text(state.error),
-            );
-          } else if (state is ProductLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is ProductSuccesState) {
-            return Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: GridView.builder(
-                itemCount: state.products.length,
-                // Defines layout dimensions for a 2-column dynamic aspect ratio
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.72,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
-                itemBuilder: (context, index) {
-                  final product = state.products[index];
-                  return ProductCard(product: product);
-                },
-              ),
+      body: BlocListener<ProductBloc, ProductState>(
+        listener: (context, state) {
+          if (state is ProductSuccesState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Products loaded succefly")),
             );
           }
-          return const SizedBox();
+          if (state is ProductFailureState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      "Prodcts does not loaded succefly, something wrong happend")),
+            );
+          }
         },
+        child: BlocBuilder<ProductBloc, ProductState>(
+          builder: (context, state) {
+            print("build Scaffolf Body");
+            if (state is ProductFailureState) {
+              return Center(
+                child: Text(state.error),
+              );
+            } else if (state is ProductLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is ProductSuccesState) {
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: GridView.builder(
+                  itemCount: state.products.length,
+                  // Defines layout dimensions for a 2-column dynamic aspect ratio
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.72,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemBuilder: (context, index) {
+                    final product = state.products[index];
+                    return ProductCard(product: product);
+                  },
+                ),
+              );
+            }
+            return const SizedBox();
+          },
+        ),
       ),
+      floatingActionButton: Builder(builder: (context) {
+        print("build floatingActionButton");
+        return FloatingActionButton(
+          onPressed: () => context.read<ProductBloc>().add(GetProductsEvent()),
+          child: Icon(Icons.add),
+        );
+      }),
     );
   }
 }
