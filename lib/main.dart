@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:state_management_learn/controllers/cubit/product_cubit.dart';
-import 'controllers/bloc/product_bloc.dart';
-import 'home_page.dart';
+import 'package:state_management_learn/core/route/app_router.dart';
+import 'package:state_management_learn/data/data_source/remote_data_source.dart';
+import 'package:state_management_learn/data/repository/character_repository_impl.dart';
+import 'package:state_management_learn/presentation/controller/cubit/character_cubit.dart';
+import 'package:state_management_learn/presentation/screens/charactere_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,20 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MultiBlocProvider(
-        providers: [
-          // BlocProvider<ProductCubit>(
-          //   create: (BuildContext context) => ProductCubit()..getProductsList(),
-          // ),
-          BlocProvider<ProductBloc>(
-            create: (BuildContext context) =>
-                ProductBloc()..add(GetProductsEvent()),
-          ),
-        ],
-        child: const HomePage(),
+      onGenerateRoute: AppRouter.onGenerateRoute,
+      home: BlocProvider(
+        create: (context) => CharacterCubit(
+            CharacterRepositoryImpl(remoteDataSource: RemoteDataSource()))
+          ..getCharacters(),
+        lazy: false,
+        child: const CharactereScreen(),
       ),
     );
   }
