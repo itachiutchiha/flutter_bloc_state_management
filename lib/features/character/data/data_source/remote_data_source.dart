@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:state_management_learn/core/constants/api_constants.dart';
-import 'package:state_management_learn/data/models/character_model.dart';
+import 'package:state_management_learn/features/character/data/models/character_model.dart';
 
 class RemoteDataSource {
   Future<List<CharacterModel>> getCharacters() async {

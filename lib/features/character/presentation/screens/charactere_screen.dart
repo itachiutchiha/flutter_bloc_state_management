@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:state_management_learn/core/route/app_routes.dart';
-import 'package:state_management_learn/data/models/character_model.dart';
-import 'package:state_management_learn/presentation/controller/cubit/character_cubit.dart';
+import 'package:state_management_learn/features/character/data/models/character_model.dart';
+import 'package:state_management_learn/features/character/presentation/controller/cubit/character_cubit.dart';
 
 class CharactereScreen extends StatelessWidget {
   const CharactereScreen();
@@ -43,7 +43,7 @@ class CharactereScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () => Navigator.pushNamed(
-                        context, AppRoutes.charactereDetails,
+                        context, AppRoutes.charactereDetailsScreen,
                         arguments: state.characters[index]),
                     child: CharacterCard(character: state.characters[index]),
                   );
@@ -65,6 +65,7 @@ class CharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("character -> ${character.name}");
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1E), // Slightly lighter than background
